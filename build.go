@@ -224,16 +224,18 @@ func (d *Document) appendTotal(pdf *gofpdf.Fpdf) {
 	pdf.CellFormat(38, 10, encodeString(d.Options.TextAfterCommissionTotal), "0", 0, "R", false, 0, "")
 	pdf.SetY(pdf.GetY() + 11)
 
-	// Draw consumption tax
-	pdf.SetX(162)
-	pdf.SetFillColor(GreyBgColor[0], GreyBgColor[1], GreyBgColor[2])
-	pdf.Rect(160, pdf.GetY(), 40, 10, "F")
-	pdf.CellFormat(40, 10, formatAmount(d.ConsumptionTax.Amount), "0", 0, "L", false, 0, "")
+	if d.ConsumptionTax != nil {
+		// Draw consumption tax
+		pdf.SetX(162)
+		pdf.SetFillColor(GreyBgColor[0], GreyBgColor[1], GreyBgColor[2])
+		pdf.Rect(160, pdf.GetY(), 40, 10, "F")
+		pdf.CellFormat(40, 10, formatAmount(d.ConsumptionTax.Amount), "0", 0, "L", false, 0, "")
 
-	pdf.SetX(120)
-	pdf.Rect(120, pdf.GetY(), 40, 10, "F")
-	pdf.CellFormat(38, 10, encodeString(d.Options.TextConsumptionTaxTotal), "0", 0, "R", false, 0, "")
-	pdf.SetY(pdf.GetY() + 15)
+		pdf.SetX(120)
+		pdf.Rect(120, pdf.GetY(), 40, 10, "F")
+		pdf.CellFormat(38, 10, encodeString(d.Options.TextConsumptionTaxTotal), "0", 0, "R", false, 0, "")
+		pdf.SetY(pdf.GetY() + 15)
+	}
 
 	// Draw withholding tax
 	pdf.SetX(162)
