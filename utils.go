@@ -11,7 +11,11 @@ import (
 	"golang.org/x/text/language"
 	"golang.org/x/text/message"
 	"golang.org/x/text/number"
+	"math/rand"
+	"time"
 )
+
+var Letters = []rune("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ")
 
 func encodeString(str string) string {
 	return str
@@ -33,4 +37,13 @@ func formatAmount(v int) string {
 	dec := number.Decimal(v, number.Scale(scale))
 	p := message.NewPrinter(language.Japanese)
 	return p.Sprintf("%v%v", currency.Symbol(cur), dec)
+}
+
+func GenerateInvoiceNumber() string {
+	rand.Seed(time.Now().UnixNano())
+	b := make([]rune, 8)
+	for i := range b {
+		b[i] = Letters[rand.Intn(len(Letters))]
+	}
+	return string(b) + "-001"
 }

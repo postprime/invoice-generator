@@ -58,7 +58,7 @@ func (d *Document) Build() (*gofpdf.Fpdf, error) {
 
 	d.appendDescription(d.pdf)
 
-	d.appendItems(d.pdf)
+	//d.appendItems(d.pdf)
 	d.appendNotes(d.pdf)
 	d.appendTotal(d.pdf)
 	if d.Options.AutoPrint {
@@ -212,6 +212,7 @@ func (d *Document) appendTotal(pdf *gofpdf.Fpdf) {
 	//	totalWithTax = totalWithDiscount.Add(totalTax)
 	//}
 
+	pdf.SetY(pdf.GetY() + 5)
 	// Draw after commission
 	pdf.SetX(162)
 	pdf.SetFillColor(GreyBgColor[0], GreyBgColor[1], GreyBgColor[2])
@@ -238,7 +239,7 @@ func (d *Document) appendTotal(pdf *gofpdf.Fpdf) {
 	pdf.SetX(162)
 	pdf.SetFillColor(GreyBgColor[0], GreyBgColor[1], GreyBgColor[2])
 	pdf.Rect(160, pdf.GetY(), 40, 10, "F")
-	pdf.CellFormat(40, 10, formatAmount(d.WithholdingTax.Amount), "0", 0, "L", false, 0, "")
+	pdf.CellFormat(40, 10, "("+formatAmount(d.WithholdingTax.Amount)+")", "0", 0, "L", false, 0, "")
 
 	pdf.SetX(120)
 	pdf.Rect(120, pdf.GetY(), 40, 10, "F")
@@ -249,7 +250,7 @@ func (d *Document) appendTotal(pdf *gofpdf.Fpdf) {
 	pdf.SetX(162)
 	pdf.SetFillColor(GreyBgColor[0], GreyBgColor[1], GreyBgColor[2])
 	pdf.Rect(160, pdf.GetY(), 40, 10, "F")
-	pdf.CellFormat(40, 10, formatAmount(d.PaymentFree.Amount), "0", 0, "L", false, 0, "")
+	pdf.CellFormat(40, 10, "("+formatAmount(d.PaymentFree.Amount)+")", "0", 0, "L", false, 0, "")
 
 	pdf.SetX(120)
 	pdf.Rect(120, pdf.GetY(), 40, 10, "F")

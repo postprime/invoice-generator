@@ -15,7 +15,7 @@ func TestNew(t *testing.T) {
 		Pagination: true,
 	})
 
-	doc.SetVersion("IV202107001")
+	doc.SetVersion(GenerateInvoiceNumber())
 
 	doc.SetDescription("対象期間：2021年5月1日～2021年5月31日")
 
@@ -29,12 +29,12 @@ func TestNew(t *testing.T) {
 
 	doc.SetCustomer(&Contact{Name: "安部　慎之介 様"})
 
-	doc.AppendItem(&Item{Name: "対象期間のDKTの売上", Total: 900000, Tax: &Tax{Amount: 90000}})
+	//doc.AppendItem(&Item{Name: "対象期間のDKTの売上", Total: 900000, Tax: &Tax{Amount: 90000}})
 
 	doc.SetAfterCommission(&AfterCommission{Amount: 630000})
 	doc.SetConsumptionTax(&ConsumptionTax{Amount: 63000})
-	doc.SetWithholdingTax(&WithholdingTax{Amount: -64323})
-	doc.SetPaymentFree(&PaymentFree{Amount: -35244})
+	doc.SetWithholdingTax(&WithholdingTax{Amount: 64323})
+	doc.SetPaymentFree(&PaymentFree{Amount: 35244})
 	doc.SetPaidAmount(&PaidAmount{Amount: 593433})
 
 	pdf, err := doc.Build()
@@ -47,9 +47,4 @@ func TestNew(t *testing.T) {
 	if err != nil {
 		t.Errorf(err.Error())
 	}
-}
-
-func TestNew1(t *testing.T) {
-	value := formatAmount(100000)
-	println(value)
 }
