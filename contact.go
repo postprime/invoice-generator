@@ -42,7 +42,7 @@ func (c *Contact) appendContactTODoc(x float64, y float64, fill bool, logoAlign 
 	}
 
 	if fill {
-		pdf.SetFillColor(GreyBgColor[0], GreyBgColor[1], GreyBgColor[2])
+		pdf.SetFillColor(255, 255, 255)
 	} else {
 		pdf.SetFillColor(255, 255, 255)
 	}
@@ -69,8 +69,8 @@ func (c *Contact) appendContactTODoc(x float64, y float64, fill bool, logoAlign 
 
 		pdf.SetFont("deja", "", 10)
 		pdf.SetXY(x, pdf.GetY()+10)
-		pdf.MultiCell(70, 5, c.Address.ToString(), "0", "L", false)
 		pdf.MultiCell(70, 5, c.Email, "0", "L", false)
+		pdf.MultiCell(70, 5, c.Address.ToString(), "0", "L", false)
 		pdf.SetXY(x, pdf.GetY()+10)
 	}
 

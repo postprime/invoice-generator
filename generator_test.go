@@ -6,12 +6,13 @@ import (
 
 func TestNew(t *testing.T) {
 	doc, _ := New(Invoice, &Options{
-		TextTypeInvoice: "使用料支払報告書",
+		TextTypeInvoice: "ロイヤリティ支払報告書",
 		AutoPrint:       true,
 	})
 
 	doc.SetFooter(&HeaderFooter{
-		Text:       "<center>ご不明な点がございましたら、 DKT株式会社 (contact@postprime.com) までお問い合わせください。</center>",
+		Text: "<center>*ロイヤリティは所得税法上の源泉徴収の対象となる使用料の支払に該当し、所定の源泉徴収税率を乗じて算出しています。</center>\n" +
+			"<center>*上記を確認の上、内容に異議がある場合には2週間以内に連絡下さいますようお願い致します。</center>",
 		Pagination: true,
 	})
 
@@ -22,17 +23,15 @@ func TestNew(t *testing.T) {
 	doc.SetDate("2021/07/10")
 
 	doc.SetCompany(&Contact{
-		Name:    "DKT株式会社",
-		Address: &Address{Country: "日本", City: "東京都", Address: "港区西新橋1-22-5", Address2: "新橋TSビル6階", PostalCode: "〒105-0003"},
-		Email:   "contact@postprime.com",
+		Name:    "PostPrime(DKT株式会社)",
+		Address: &Address{Country: " ", City: " ", Address: " ", Address2: " ", PostalCode: " "},
 	})
 
 	doc.SetCustomer(&Contact{Name: "安部　慎之介 様"})
 
 	//doc.AppendItem(&Item{Name: "対象期間のDKTの売上", Total: 900000, Tax: &Tax{Amount: 90000}})
 
-	doc.SetAfterCommission(&AfterCommission{Amount: 630000})
-	doc.SetConsumptionTax(&ConsumptionTax{Amount: 63000})
+	doc.SetAfterCommission(&AfterCommission{Amount: 630000, ConsumptionTax: 64545, IsDomesticCreator: true})
 	doc.SetWithholdingTax(&WithholdingTax{Amount: 64323})
 	doc.SetPaymentFree(&PaymentFree{Amount: 35244})
 	doc.SetPaidAmount(&PaidAmount{Amount: 593433})

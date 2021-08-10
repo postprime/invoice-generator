@@ -9,8 +9,6 @@ package invoice_generator
 import (
 	"fmt"
 	"github.com/jung-kurt/gofpdf"
-	"github.com/shopspring/decimal"
-	"strconv"
 	"time"
 )
 
@@ -164,109 +162,73 @@ func (d *Document) appendNotes(pdf *gofpdf.Fpdf) {
 }
 
 func (d *Document) appendTotal(pdf *gofpdf.Fpdf) {
-	total, _ := decimal.NewFromString("0")
-
-	for _, item := range d.Items {
-		temp, _ := decimal.NewFromString(strconv.Itoa(item.Total))
-		total = total.Add(temp)
-	}
-
-	//// Tax
-	//totalTax := decimal.NewFromFloat(0)
-	//if d.Discount == nil {
-	//	for _, item := range d.Items {
-	//		totalTax = totalTax.Add(item.taxWithDiscount())
-	//	}
-	//} else {
-	//	discountType, discountAmount := d.Discount.getDiscount()
-	//	discountPercent := discountAmount
-	//	if discountType == "amount" {
-	//		// Get percent from total discounted
-	//		discountPercent = discountAmount.Mul(decimal.NewFromFloat(100)).Div(totalWithDiscount)
-	//	}
-	//
-	//	for _, item := range d.Items {
-	//		if item.Tax != nil {
-	//			taxType, taxAmount := item.Tax.getTax()
-	//			if taxType == "amount" {
-	//				// If tax type is amount, juste add amount to tax
-	//				totalTax = totalTax.Add(taxAmount)
-	//			} else {
-	//				// Else, remove doc discount % from item total without tax and item discount
-	//				itemTotal := item.totalWithoutTaxAndWithDiscount()
-	//				toSub := discountPercent.Mul(itemTotal).Div(decimal.NewFromFloat(100))
-	//				itemTotalDiscounted := itemTotal.Sub(toSub)
-	//
-	//				// Then recompute tax on itemTotalDiscounted
-	//				itemTaxDiscounted := taxAmount.Mul(itemTotalDiscounted).Div(decimal.NewFromFloat(100))
-	//
-	//				totalTax = totalTax.Add(itemTaxDiscounted)
-	//			}
-	//		}
-	//	}
-	//}
-	//
-	//// finalTotal
-	//totalWithTax := total.Add(totalTax)
-	//if d.Discount != nil {
-	//	totalWithTax = totalWithDiscount.Add(totalTax)
-	//}
-
 	pdf.SetY(pdf.GetY() + 5)
 	// Draw after commission
-	pdf.SetX(162)
-	pdf.SetFillColor(GreyBgColor[0], GreyBgColor[1], GreyBgColor[2])
-	pdf.Rect(160, pdf.GetY(), 40, 10, "F")
-	pdf.CellFormat(40, 10, formatAmount(d.AfterCommission.Amount), "0", 0, "L", false, 0, "")
-
-	pdf.SetX(120)
-	pdf.Rect(120, pdf.GetY(), 40, 10, "F")
-	pdf.CellFormat(38, 10, encodeString(d.Options.TextAfterCommissionTotal), "0", 0, "R", false, 0, "")
-	pdf.SetY(pdf.GetY() + 11)
+	if d.AfterCommission.IsDomesticCreator {
+		pdf.SetX(82)
+		pdf.SetFillColor(GreyBgColor[0], GreyBgColor[1], GreyBgColor[2])
+		pdf.Rect(80, pdf.GetY(), 60, 10, "F")
+		pdf.CellFormat(60, 10, formatAmount(d.AfterCommission.Amount)+" (内、消費税"+formatAmount(d.AfterCommission.ConsumptionTax)+")", "0", 0, "L", false, 0, "")
+		pdf.SetX(30)
+		pdf.Rect(20, pdf.GetY(), 60, 10, "F")
+		pdf.CellFormat(40, 10, encodeString(d.Options.TextAfterCommissionTotal), "0", 0, "R", false, 0, "")
+		pdf.SetY(pdf.GetY() + 11)
+	} else {
+		pdf.SetX(82)
+		pdf.SetFillColor(GreyBgColor[0], GreyBgColor[1], GreyBgColor[2])
+		pdf.Rect(80, pdf.GetY(), 60, 10, "F")
+		pdf.CellFormat(60, 10, formatAmount(d.AfterCommission.Amount), "0", 0, "L", false, 0, "")
+		pdf.SetX(30)
+		pdf.Rect(20, pdf.GetY(), 60, 10, "F")
+		pdf.CellFormat(40, 10, encodeString(d.Options.TextAfterCommissionTotalOversea), "0", 0, "R", false, 0, "")
+		pdf.SetY(pdf.GetY() + 11)
+	}
 
 	if d.ConsumptionTax != nil {
 		// Draw consumption tax
-		pdf.SetX(162)
+		pdf.SetX(82)
 		pdf.SetFillColor(GreyBgColor[0], GreyBgColor[1], GreyBgColor[2])
-		pdf.Rect(160, pdf.GetY(), 40, 10, "F")
-		pdf.CellFormat(40, 10, formatAmount(d.ConsumptionTax.Amount), "0", 0, "L", false, 0, "")
+		pdf.Rect(80, pdf.GetY(), 60, 10, "F")
+		pdf.CellFormat(60, 10, formatAmount(d.ConsumptionTax.Amount), "0", 0, "L", false, 0, "")
 
-		pdf.SetX(120)
-		pdf.Rect(120, pdf.GetY(), 40, 10, "F")
-		pdf.CellFormat(38, 10, encodeString(d.Options.TextConsumptionTaxTotal), "0", 0, "R", false, 0, "")
+		pdf.SetX(30)
+		pdf.Rect(20, pdf.GetY(), 40, 10, "F")
+		pdf.CellFormat(40, 10, encodeString(d.Options.TextConsumptionTaxTotal), "0", 0, "R", false, 0, "")
 		pdf.SetY(pdf.GetY() + 15)
 	}
 
 	// Draw withholding tax
-	pdf.SetX(162)
-	pdf.SetFillColor(GreyBgColor[0], GreyBgColor[1], GreyBgColor[2])
-	pdf.Rect(160, pdf.GetY(), 40, 10, "F")
-	pdf.CellFormat(40, 10, "("+formatAmount(d.WithholdingTax.Amount)+")", "0", 0, "L", false, 0, "")
+	if d.WithholdingTax != nil {
+		pdf.SetX(82)
+		pdf.SetFillColor(GreyBgColor[0], GreyBgColor[1], GreyBgColor[2])
+		pdf.Rect(80, pdf.GetY(), 60, 10, "F")
+		pdf.CellFormat(60, 10, "("+formatAmount(d.WithholdingTax.Amount)+")", "0", 0, "L", false, 0, "")
 
-	pdf.SetX(120)
-	pdf.Rect(120, pdf.GetY(), 40, 10, "F")
-	pdf.CellFormat(38, 10, encodeString(d.Options.TextWithholdingTaxTotal), "0", 0, "R", false, 0, "")
-	pdf.SetY(pdf.GetY() + 11)
+		pdf.SetX(30)
+		pdf.Rect(20, pdf.GetY(), 60, 10, "F")
+		pdf.CellFormat(40, 10, encodeString(d.Options.TextWithholdingTaxTotal), "0", 0, "R", false, 0, "")
+		pdf.SetY(pdf.GetY() + 11)
+	}
 
 	// Draw payment free
-	pdf.SetX(162)
+	pdf.SetX(82)
 	pdf.SetFillColor(GreyBgColor[0], GreyBgColor[1], GreyBgColor[2])
-	pdf.Rect(160, pdf.GetY(), 40, 10, "F")
+	pdf.Rect(80, pdf.GetY(), 60, 10, "F")
 	pdf.CellFormat(40, 10, "("+formatAmount(d.PaymentFree.Amount)+")", "0", 0, "L", false, 0, "")
 
-	pdf.SetX(120)
-	pdf.Rect(120, pdf.GetY(), 40, 10, "F")
-	pdf.CellFormat(38, 10, encodeString(d.Options.TextPaymentTotal), "0", 0, "R", false, 0, "")
+	pdf.SetX(30)
+	pdf.Rect(20, pdf.GetY(), 60, 10, "F")
+	pdf.CellFormat(40, 10, encodeString(d.Options.TextPaymentTotal), "0", 0, "R", false, 0, "")
 	pdf.SetY(pdf.GetY() + 11)
 
 	// Draw paid amount
-	pdf.SetX(162)
+	pdf.SetX(82)
 	pdf.SetFillColor(GreyBgColor[0], GreyBgColor[1], GreyBgColor[2])
-	pdf.Rect(160, pdf.GetY(), 40, 10, "F")
-	pdf.CellFormat(40, 10, formatAmount(d.PaidAmount.Amount), "0", 0, "L", false, 0, "")
+	pdf.Rect(80, pdf.GetY(), 60, 10, "F")
+	pdf.CellFormat(60, 10, formatAmount(d.PaidAmount.Amount), "0", 0, "L", false, 0, "")
 
-	pdf.SetX(120)
+	pdf.SetX(30)
 	pdf.SetFillColor(GreyBgColor[0], GreyBgColor[1], GreyBgColor[2])
-	pdf.Rect(120, pdf.GetY(), 40, 10, "F")
-	pdf.CellFormat(38, 10, encodeString(d.Options.TextTotalTotal), "0", 0, "R", false, 0, "")
+	pdf.Rect(20, pdf.GetY(), 60, 10, "F")
+	pdf.CellFormat(40, 10, encodeString(d.Options.TextTotalTotal), "0", 0, "R", false, 0, "")
 }
