@@ -35,6 +35,8 @@ func TestNew(t *testing.T) {
 	doc.SetWithholdingTax(&WithholdingTax{Amount: 64323})
 	doc.SetPaymentFree(&PaymentFree{Amount: 35244})
 	doc.SetPaidAmount(&PaidAmount{Amount: 593433})
+	doc.SetPaidAmount1(&PaidAmount{Amount: 304050, PayoutDate: "2021年11月30日"})
+	doc.SetPaidAmount2(&PaidAmount{Amount: 304050, PayoutDate: "2021年12月31日"})
 
 	pdf, err := doc.Build()
 	if err != nil {

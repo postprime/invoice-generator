@@ -85,3 +85,12 @@ func (d *Document) SetPaidAmount(paidAmount *PaidAmount) *Document {
 	d.PaidAmount = paidAmount
 	return d
 }
+
+func (d *Document) SetPaidAmount1(paidAmount *PaidAmount) *Document {
+	d.PaidAmount1 = paidAmount
+	return d
+}
+func (d *Document) SetPaidAmount2(paidAmount *PaidAmount) *Document {
+	d.PaidAmount2 = paidAmount
+	return d
+}

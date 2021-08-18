@@ -30,4 +30,6 @@ type Options struct {
 	TextPaymentTotal                string `default:"決済手数料" json:"text_payment_total,omitempty"`
 	TextWithholdingTaxTotal         string `default:"源泉所得税" json:"text_withholding_tax_total,omitempty"`
 	TextTotalTotal                  string `default:"お支払い金額" json:"text_total_total,omitempty"`
+	Payout1                         string `default:"第1回支払日" json:"payout_1,omitempty"`
+	Payout2                         string `default:"第2回支払日" json:"payout_2,omitempty"`
 }

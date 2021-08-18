@@ -9,6 +9,9 @@ package invoice_generator
 import (
 	"fmt"
 	"github.com/jung-kurt/gofpdf"
+	"io"
+	"net/http"
+	"os"
 	"time"
 )
 
@@ -39,7 +42,11 @@ func (d *Document) Build() (*gofpdf.Fpdf, error) {
 	}
 
 	d.pdf.AddPage()
-	d.pdf.AddUTF8Font("deja", "", "./fonts/japanese-font.ttf")
+	fontUrl := "https://assets.postprime.com/fonts/japanese-font.ttf"
+	if err := DownloadFile("japanese-font.ttf", fontUrl); err != nil {
+		panic(err)
+	}
+	d.pdf.AddUTF8Font("deja", "", "japanese-font.ttf")
 	d.pdf.SetFont("deja", "", 12)
 
 	d.appendTitle(d.pdf)
@@ -141,6 +148,24 @@ func (d *Document) appendItems(pdf *gofpdf.Fpdf) {
 	}
 }
 
+func DownloadFile(filepath string, url string) error {
+
+	resp, err := http.Get(url)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	out, err := os.Create(filepath)
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+
+	_, err = io.Copy(out, resp.Body)
+	return err
+}
+
 func (d *Document) appendNotes(pdf *gofpdf.Fpdf) {
 	if len(d.Notes) == 0 {
 		return
@@ -231,4 +256,29 @@ func (d *Document) appendTotal(pdf *gofpdf.Fpdf) {
 	pdf.SetFillColor(GreyBgColor[0], GreyBgColor[1], GreyBgColor[2])
 	pdf.Rect(20, pdf.GetY(), 60, 10, "F")
 	pdf.CellFormat(40, 10, encodeString(d.Options.TextTotalTotal), "0", 0, "R", false, 0, "")
+
+	d.appendNotes(d.pdf)
+
+	pdf.SetY(pdf.GetY() + 15)
+	// Draw pay out date
+	pdf.SetX(102)
+	pdf.SetFillColor(GreyBgColor[0], GreyBgColor[1], GreyBgColor[2])
+	pdf.Rect(100, pdf.GetY(), 40, 10, "F")
+	pdf.CellFormat(40, 10, formatAmount(d.PaidAmount1.Amount), "0", 0, "L", false, 0, "")
+
+	pdf.SetX(30)
+	pdf.SetFillColor(GreyBgColor[0], GreyBgColor[1], GreyBgColor[2])
+	pdf.Rect(20, pdf.GetY(), 80, 10, "F")
+	pdf.CellFormat(60, 10, encodeString(d.Options.Payout1+"   "+d.PaidAmount1.PayoutDate), "0", 0, "R", false, 0, "")
+	pdf.SetY(pdf.GetY() + 11)
+
+	pdf.SetX(102)
+	pdf.SetFillColor(GreyBgColor[0], GreyBgColor[1], GreyBgColor[2])
+	pdf.Rect(100, pdf.GetY(), 40, 10, "F")
+	pdf.CellFormat(40, 10, formatAmount(d.PaidAmount2.Amount), "0", 0, "L", false, 0, "")
+
+	pdf.SetX(30)
+	pdf.SetFillColor(GreyBgColor[0], GreyBgColor[1], GreyBgColor[2])
+	pdf.Rect(20, pdf.GetY(), 80, 10, "F")
+	pdf.CellFormat(60, 10, encodeString(d.Options.Payout2+"   "+d.PaidAmount2.PayoutDate), "0", 0, "R", false, 0, "")
 }

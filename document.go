@@ -29,4 +29,6 @@ type Document struct {
 	WithholdingTax  *WithholdingTax  `json:"withholding_tax,omitempty"`
 	PaymentFree     *PaymentFree     `json:"payment_free,omitempty"`
 	PaidAmount      *PaidAmount      `json:"paid_amount,omitempty"`
+	PaidAmount1     *PaidAmount      `json:"paid_amount_1,omitempty"`
+	PaidAmount2     *PaidAmount      `json:"paid_amount_2,omitempty"`
 }
