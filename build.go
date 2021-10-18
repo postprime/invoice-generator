@@ -264,21 +264,11 @@ func (d *Document) appendTotal(pdf *gofpdf.Fpdf) {
 	pdf.SetX(102)
 	pdf.SetFillColor(GreyBgColor[0], GreyBgColor[1], GreyBgColor[2])
 	pdf.Rect(100, pdf.GetY(), 40, 10, "F")
-	pdf.CellFormat(40, 10, formatAmount(d.PaidAmount1.Amount), "0", 0, "L", false, 0, "")
+	pdf.CellFormat(40, 10, formatAmount(d.PaidAmount.Amount), "0", 0, "L", false, 0, "")
 
 	pdf.SetX(30)
 	pdf.SetFillColor(GreyBgColor[0], GreyBgColor[1], GreyBgColor[2])
 	pdf.Rect(20, pdf.GetY(), 80, 10, "F")
-	pdf.CellFormat(60, 10, encodeString(d.Options.Payout1+"   "+d.PaidAmount1.PayoutDate), "0", 0, "R", false, 0, "")
+	pdf.CellFormat(60, 10, encodeString(d.Options.Payout+"   "+d.PaidAmount.PayoutDate), "0", 0, "R", false, 0, "")
 	pdf.SetY(pdf.GetY() + 11)
-
-	pdf.SetX(102)
-	pdf.SetFillColor(GreyBgColor[0], GreyBgColor[1], GreyBgColor[2])
-	pdf.Rect(100, pdf.GetY(), 40, 10, "F")
-	pdf.CellFormat(40, 10, formatAmount(d.PaidAmount2.Amount), "0", 0, "L", false, 0, "")
-
-	pdf.SetX(30)
-	pdf.SetFillColor(GreyBgColor[0], GreyBgColor[1], GreyBgColor[2])
-	pdf.Rect(20, pdf.GetY(), 80, 10, "F")
-	pdf.CellFormat(60, 10, encodeString(d.Options.Payout2+"   "+d.PaidAmount2.PayoutDate), "0", 0, "R", false, 0, "")
 }
