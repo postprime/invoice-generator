@@ -28,6 +28,7 @@ func TestNew(t *testing.T) {
 	})
 
 	doc.SetCustomer(&Contact{Name: "安部　慎之介 様"})
+	doc.SetInvoiceRegistrationNumber("T1234567891234")
 
 	//doc.AppendItem(&Item{Name: "対象期間のDKTの売上", Total: 900000, Tax: &Tax{Amount: 90000}})
 
