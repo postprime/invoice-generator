@@ -85,8 +85,3 @@ func (d *Document) SetPaidAmount(paidAmount *PaidAmount) *Document {
 	d.PaidAmount = paidAmount
 	return d
 }
-
-func (d *Document) SetInvoiceRegistrationNumber(invoiceRegistrationNumber string) *Document {
-	d.InvoiceRegistrationNumber = &invoiceRegistrationNumber
-	return d
-}

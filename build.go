@@ -52,7 +52,6 @@ func (d *Document) Build() (*gofpdf.Fpdf, error) {
 
 	d.appendTitle(d.pdf)
 	d.appendMetas(d.pdf)
-	d.appendInvoiceNumberInfo(d.pdf)
 
 	companyBottom := d.Company.appendCompanyContactToDoc(d.pdf)
 	customerBottom := d.Customer.appendCustomerContactToDoc(d.pdf)
@@ -100,16 +99,6 @@ func (d *Document) appendMetas(pdf *gofpdf.Fpdf) {
 	pdf.SetXY(120, BaseMarginTop+19)
 	pdf.SetFont("deja", "", 8)
 	pdf.CellFormat(80, 4, encodeString(dateString), "0", 0, "R", false, 0, "")
-}
-
-func (d *Document) appendInvoiceNumberInfo(pdf *gofpdf.Fpdf) {
-	if d.InvoiceRegistrationNumber == nil {
-		return
-	}
-	invoiceNumberString := fmt.Sprintf("%s: %s", d.Options.TextInvoiceRegistrationNumber, *d.InvoiceRegistrationNumber)
-	pdf.SetXY(120, BaseMarginTop+23)
-	pdf.SetFont("deja", "", 8)
-	pdf.CellFormat(80, 4, encodeString(invoiceNumberString), "0", 0, "R", false, 0, "")
 }
 
 func (d *Document) appendDescription(pdf *gofpdf.Fpdf) {
