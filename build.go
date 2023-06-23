@@ -8,11 +8,12 @@ package invoice_generator
 
 import (
 	"fmt"
-	"github.com/jung-kurt/gofpdf"
 	"io"
 	"net/http"
 	"os"
 	"time"
+
+	"github.com/jung-kurt/gofpdf"
 )
 
 func (d *Document) Build() (*gofpdf.Fpdf, error) {

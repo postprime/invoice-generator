@@ -9,15 +9,18 @@ package invoice_generator
 import (
 	"bytes"
 	b64 "encoding/base64"
-	"github.com/jung-kurt/gofpdf"
+	"fmt"
 	"image"
+
+	"github.com/jung-kurt/gofpdf"
 )
 
 type Contact struct {
-	Name    string   `json:"name,omitempty" validate:"required,min=1,max=256"`
-	Logo    *[]byte  `json:"logo,omitempty"`
-	Address *Address `json:"address,omitempty"`
-	Email   string   `json:"email,omitempty"`
+	Name                      string   `json:"name,omitempty" validate:"required,min=1,max=256"`
+	Logo                      *[]byte  `json:"logo,omitempty"`
+	Address                   *Address `json:"address,omitempty"`
+	Email                     string   `json:"email,omitempty"`
+	InvoiceRegistrationNumber string   `json:"invoice_registration_number,omitempty"`
 }
 
 func (c *Contact) appendContactTODoc(x float64, y float64, fill bool, logoAlign string, pdf *gofpdf.Fpdf) float64 {
@@ -53,6 +56,12 @@ func (c *Contact) appendContactTODoc(x float64, y float64, fill bool, logoAlign 
 	pdf.SetFont("deja", "", 14)
 	pdf.Cell(40, 8, c.Name)
 	pdf.SetFont("deja", "", 10)
+
+	if c.InvoiceRegistrationNumber != "" {
+		pdf.SetXY(x, pdf.GetY()+8)
+		invoiceNumberString := fmt.Sprintf("%s: %s", "登録番号", c.InvoiceRegistrationNumber)
+		pdf.Cell(40, 5, invoiceNumberString)
+	}
 
 	if c.Address != nil {
 		var addrRectHeight float64 = 17

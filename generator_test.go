@@ -27,7 +27,20 @@ func TestNew(t *testing.T) {
 		Address: &Address{Country: " ", City: " ", Address: " ", Address2: " ", PostalCode: " "},
 	})
 
-	doc.SetCustomer(&Contact{Name: "安部　慎之介 様"})
+	doc.SetCustomer(
+		&Contact{
+			Name: "安部　慎之介 様",
+			Address: &Address{
+				Address:    "港区芝浦3-8-1",
+				Address2:   "ホゲホゲビル 3F",
+				PostalCode: "1080023",
+				City:       "東京都",
+				Country:    "日本",
+			},
+			Email:                     "abe.shinosuke@gmail.com",
+			InvoiceRegistrationNumber: "T1234567891234",
+		},
+	)
 
 	//doc.AppendItem(&Item{Name: "対象期間のDKTの売上", Total: 900000, Tax: &Tax{Amount: 90000}})
 
