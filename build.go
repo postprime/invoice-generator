@@ -78,7 +78,14 @@ func (d *Document) appendTitle(pdf *gofpdf.Fpdf) {
 	title := d.typeAsString()
 	pdf.SetXY(120, BaseMarginTop)
 	pdf.SetFillColor(DarkBgColor[0], DarkBgColor[1], DarkBgColor[2])
-	pdf.Rect(120, BaseMarginTop, 80, 10, "F")
+	titleCharacters := []rune(title)
+	if len(titleCharacters) >= 13 {
+		// in case: [調整ロイヤリティ支払報告書]
+		pdf.Rect(110, BaseMarginTop, 100, 10, "F")
+	} else {
+		// in case: [ロイヤリティ支払報告書]
+		pdf.Rect(120, BaseMarginTop, 80, 10, "F")
+	}
 	d.pdf.SetFont("deja", "", 20)
 	pdf.CellFormat(80, 10, title, "0", 0, "C", false, 0, "")
 }
